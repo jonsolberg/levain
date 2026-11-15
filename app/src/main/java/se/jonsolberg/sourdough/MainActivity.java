@@ -43,6 +43,12 @@ public class MainActivity extends Activity {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
                 Uri u = request.getUrl();
+                // The Ko-fi link opens in the phone's browser; the app itself stays offline.
+                if ("https".equals(u.getScheme()) && "ko-fi.com".equals(u.getHost())) {
+                    try { startActivity(new Intent(Intent.ACTION_VIEW, u)); }
+                    catch (ActivityNotFoundException ignored) { }
+                    return true;
+                }
                 // Only the bundled page may load inside the app.
                 return !"file".equals(u.getScheme());
             }

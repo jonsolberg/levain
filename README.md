@@ -20,11 +20,18 @@ No internet permission – everything is bundled in `app/src/main/assets/index.h
 
 ## Download
 
-**[Download the latest APK](https://github.com/jonsolberg/sourdough-calc/releases/latest/download/Levain.apk)** · [all releases](https://github.com/jonsolberg/sourdough-calc/releases)
+**[Download the latest APK](https://github.com/jonsolberg/levain/releases/latest/download/Levain.apk)** · [all releases](https://github.com/jonsolberg/levain/releases)
 
 ## Building
 Push to GitHub – the workflow builds the APK and publishes `Levain.apk` on the `apk` branch.
 Or open the folder in Android Studio and choose *Build → Build APK(s)*.
+
+## Support
+
+Levain is free, open source and has no ads. If you find it useful, you can
+[buy me a beer on Ko-fi](https://ko-fi.com/jonsolberg) 🍺
+
+[![Buy me a beer on Ko-fi](https://img.shields.io/badge/Ko--fi-buy%20me%20a%20beer-FF5E5B?logo=ko-fi&logoColor=white)](https://ko-fi.com/jonsolberg)
 
 ## License
 

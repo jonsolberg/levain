@@ -187,6 +187,12 @@ dialog::backdrop{background:#0008}
   <h2><span data-t="learning">Learning Centre</span></h2>
   <div id="learnBody"></div>
 </section>
+
+<section class="card tips">
+  <h2><span data-t="supportH">Support</span></h2>
+  <p data-t="beerT">Levain is free and has no ads. If it helps your baking, you can buy me a beer.</p>
+  <a class="btn p" href="https://ko-fi.com/jonsolberg" style="display:block;text-align:center;text-decoration:none;margin-top:10px">🍺 <span data-t="beer">Buy me a beer on Ko-fi</span></a>
+</section>
 </main>
 
 <div id="kitchen"></div>
@@ -205,7 +211,7 @@ dialog::backdrop{background:#0008}
 /* ---------- i18n ---------- */
 const SV = (navigator.language||'').toLowerCase().startsWith('sv');
 const T = {
- en:{appName:"Levain",tagline:"",calculator:"Dough",reset:"Reset",share:"Share",
+ en:{supportH:"Support",beerT:"Levain is free and has no ads. If it helps your baking, you can buy me a beer.",beer:"Buy me a beer on Ko-fi",appName:"Levain",tagline:"",calculator:"Dough",reset:"Reset",share:"Share",
   breadStyle:"Bread",calcMode:"Start from",modeDough:"Dough weight",modeFlour:"Flour weight",
   weightDough:"Dough per loaf",weightFlour:"Flour per loaf, incl. starter",
   loaves:"Number of loaves",perLoaf:n=>`1 loaf = ${n} total`,
@@ -244,7 +250,7 @@ const T = {
    ["Sourdough Terminology",`<ul><li><b>Starter / levain</b> – the culture of wild yeast and bacteria that raises the bread.</li><li><b>Starter hydration</b> – water as a % of the flour in the starter. 100% means equal weights.</li><li><b>Autolyse</b> – resting flour and water before adding starter and salt.</li><li><b>Bulk fermentation</b> – the first rise of the whole dough.</li><li><b>Stretch &amp; fold</b> – gentle strengthening by pulling the dough up and over itself.</li><li><b>Banneton</b> – proofing basket.</li><li><b>Oven spring</b> – the rapid rise in the first minutes of baking.</li><li><b>Crumb</b> – the inside structure of the loaf.</li></ul>`],
    ["Basic Timeline",`<ul><li><b>Morning:</b> feed the starter.</li><li><b>Noon:</b> autolyse, then mix in starter and salt.</li><li><b>Afternoon:</b> bulk fermentation with folds, 3–6 h depending on temperature.</li><li><b>Evening:</b> shape and put in the fridge.</li><li><b>Next morning:</b> bake straight from the fridge.</li></ul><p>Warmer dough (26 °C) ferments much faster than cool dough (21 °C). Watch the dough, not the clock.</p>`]
   ]},
- sv:{appName:"Levain",tagline:"",calculator:"Deg",reset:"Återställ",share:"Dela",
+ sv:{supportH:"Stöd appen",beerT:"Levain är gratis och reklamfri. Om den hjälper ditt bakande får du gärna bjuda mig på en öl.",beer:"Bjud på en öl via Ko-fi",appName:"Levain",tagline:"",calculator:"Deg",reset:"Återställ",share:"Dela",
   breadStyle:"Bröd",calcMode:"Utgå från",modeDough:"Degvikt",modeFlour:"Mjölvikt",
   weightDough:"Deg per bröd",weightFlour:"Mjöl per bröd, inkl. surdeg",
   loaves:"Antal bröd",perLoaf:n=>`1 bröd = ${n} totalt`,
