@@ -23,6 +23,32 @@ header h1 small{display:block;font-size:11px;color:var(--muted);font-weight:400}
 .hbtn{background:transparent;border:1px solid var(--line);color:var(--text);border-radius:18px;min-width:36px;height:36px;padding:0 10px;font-size:14px;display:grid;place-items:center}
 .hbtn svg{width:18px;height:18px}
 .hbtn.on{background:var(--accent);border-color:var(--accent);color:var(--onaccent)}
+#timerBtn{position:relative;border-color:var(--crust);color:var(--crust)}
+#timerBtn.run{background:var(--crust);color:#fff8ec}
+#timerBtn .badge{position:absolute;top:-5px;right:-5px;min-width:18px;height:18px;border-radius:9px;background:var(--bad);color:#fff;font:700 11px/18px system-ui;padding:0 4px}
+#timerBtn .badge:empty{display:none}
+.tstart{display:inline-flex;align-items:center;gap:6px;background:var(--crust);border:none;color:#fff8ec;border-radius:22px;padding:9px 16px;font-size:16px;font-weight:700;margin-top:8px}
+.tstart svg{width:18px;height:18px}
+.tstart.again{background:transparent;color:var(--crust);border:2px solid var(--crust)}
+.trun{display:inline-flex;align-items:center;gap:10px;margin-top:8px;padding:4px 4px 4px 14px;border:2px solid var(--crust);border-radius:22px}
+.trun .tt{font-size:20px}
+#nextBar{position:fixed;left:12px;right:12px;bottom:16px;z-index:26;max-width:616px;margin:0 auto;background:var(--text);color:var(--bg);border-radius:12px;padding:12px 12px 12px 16px;display:flex;align-items:center;gap:10px;box-shadow:0 6px 24px #0005;transform:translateY(150%);transition:transform .25s}
+#nextBar.show{transform:none}
+#nextBar .nt{flex:1;font-size:15px;line-height:1.3}
+#nextBar .nt small{display:block;opacity:.7;font-size:12px;text-transform:uppercase;letter-spacing:.08em}
+#nextBar .tstart{margin:0}
+#nextBar .nx{background:none;border:none;color:inherit;opacity:.6;font-size:18px;width:28px}
+#tdlg{padding:16px 16px 12px;max-height:85vh}
+#tdlg h3{font:700 20px Georgia,'Noto Serif',serif;margin:0 0 4px;display:flex;align-items:center}
+#tdlg h3 .sp{flex:1}
+#tdlg .sec{margin-top:14px}
+.qchips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.qchips button{background:transparent;border:1px solid var(--crust);color:var(--crust);border-radius:22px;padding:8px 12px;font-size:14px;font-weight:600}
+.qrow{display:flex;gap:8px;margin-top:8px;align-items:center}
+.qrow input{flex:1}
+.srow{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--line);font-size:15px}
+.srow .tl{flex:1}
+.srow .tstart{margin:0;padding:6px 12px;font-size:14px}
 main{padding:12px;max-width:640px;margin:0 auto}
 .card{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:16px;margin-bottom:14px;box-shadow:var(--shadow);border-top:3px solid var(--crust)}
 .card h2{font-size:19px;margin:0 0 12px;display:flex;align-items:center;gap:8px}
@@ -99,6 +125,8 @@ details b{color:var(--text)}
 #kitchen .ki{display:flex;gap:12px;align-items:center;padding:14px 4px;border-bottom:1px solid var(--line);font-size:19px}
 #kitchen .ki .w{margin-left:auto;font-weight:700;white-space:nowrap}
 #kitchen .ki.done{opacity:.4;text-decoration:line-through}
+#kitchen .ki.done .tstart{display:none}
+#kitchen .ki.done .trun{text-decoration:none}
 #kitchen .ki .ck{width:26px;height:26px;border-radius:7px;border:2px solid var(--accent);flex:none;display:grid;place-items:center;font-size:16px;color:transparent}
 #kitchen .ki.done .ck{background:var(--accent);color:var(--onaccent)}
 #kitchen .ki .dsc{display:block;font-size:14px;color:var(--muted)}
@@ -115,6 +143,7 @@ dialog::backdrop{background:#0008}
 <header>
   <div class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 22V9"/><path d="M12 9c-3-1-4-4-3-7 3 1 4 4 3 7zM12 9c3-1 4-4 3-7-3 1-4 4-3 7z"/><path d="M12 15c-3-.5-5-3-5-6 3 .3 5 3 5 6zM12 15c3-.5 5-3 5-6-3 .3-5 3-5 6z"/></svg></div>
   <h1 data-t="appName">Levain</h1>
+  <button class="hbtn" id="timerBtn" aria-label="Timers"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5M9 2h6M12 2v3"/></svg><span class="badge" id="timerBadge"></span></button>
   <button class="hbtn" id="awakeBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M10 18h4"/></svg></button>
   <button class="hbtn" id="themeBtn"></button>
 </header>
@@ -208,6 +237,8 @@ dialog::backdrop{background:#0008}
 
 <div id="kitchen"></div>
 <div id="toast"></div>
+<div id="nextBar"></div>
+<dialog id="tdlg"><div id="tdlgBody"></div></dialog>
 <dialog id="dlg"><form method="dialog">
   <p id="dlgMsg" style="margin-top:0"></p>
   <input type="text" id="dlgInput">
@@ -236,7 +267,7 @@ const T = {
   summary:"SUMMARY",totalFlour:"Total flour (incl. starter)",totalWater:"Total water (incl. starter)",totalWeight:"Total weight",
   bakers:"BAKER'S PERCENTAGES",flour:"Flour",doughWater:"Water (hydration)",
   style:"Style",enterKitchen:"Start baking",notes:"Notes",notesPh:"Your notes: timings, temperatures, how it turned out…",
-  steps:"Method",addStep:"Add Step",defaultSteps:"Use template",stepTitle:"Step",stepDesc:"Details (optional)",stepMin:"min",timers:"Timers",stopAlarm:"Stop alarm",timeUp:"Time's up",cancelTimer:"Cancel timer",
+  steps:"Method",addStep:"Add Step",defaultSteps:"Use template",stepTitle:"Step",stepDesc:"Details (optional)",stepMin:"min",timers:"Timers",stopAlarm:"Stop alarm",timeUp:"Time's up",cancelTimer:"Cancel timer",startTimer:"Start timer",nextStep:"Next step",quickTimer:"Quick timer",stepTimers:"Step timers",running:"Running now",noTimers:"No timers running.",timerMin:"Timer (min)",timerWord:"Timer",minutes:"Minutes",close:"Close",noStepTimers:"Give a step a timer under Method and it shows up here.",
   saved:"My recipes",saveCurrent:"Save current",noSaved:"No saved recipes yet.",load:"Load",del:"Delete",recipeName:"Recipe name",
   savedOk:"Recipe saved",loadedOk:"Recipe loaded",deleteQ:n=>`Delete “${n}”?`,overwriteQ:n=>`Replace the saved recipe “${n}”?`,
   quickTips:"Tips",tip1:"New to sourdough? Start around 65% hydration.",tip2:"Starter test: a spoonful should float in water when it's ready.",
@@ -275,7 +306,7 @@ const T = {
   summary:"SAMMANSTÄLLNING",totalFlour:"Totalt mjöl (inkl. surdeg)",totalWater:"Totalt vatten (inkl. surdeg)",totalWeight:"Total vikt",
   bakers:"BAGARPROCENT",flour:"Mjöl",doughWater:"Vatten (vattenhalt)",
   style:"Typ",enterKitchen:"Börja baka",notes:"Anteckningar",notesPh:"Dina anteckningar: tider, temperaturer, hur det blev…",
-  steps:"Gör så här",addStep:"Lägg till steg",defaultSteps:"Använd mall",stepTitle:"Steg",stepDesc:"Beskrivning (valfri)",stepMin:"min",timers:"Timers",stopAlarm:"Stoppa larmet",timeUp:"Tiden är ute",cancelTimer:"Avbryt timern",
+  steps:"Gör så här",addStep:"Lägg till steg",defaultSteps:"Använd mall",stepTitle:"Steg",stepDesc:"Beskrivning (valfri)",stepMin:"min",timers:"Timers",stopAlarm:"Stoppa larmet",timeUp:"Tiden är ute",cancelTimer:"Avbryt timern",startTimer:"Starta timer",nextStep:"Nästa steg",quickTimer:"Snabbtimer",stepTimers:"Timers för stegen",running:"Pågår nu",noTimers:"Inga timers igång.",timerMin:"Timer (min)",timerWord:"Timer",minutes:"Minuter",close:"Stäng",noStepTimers:"Ge ett steg en timer under Gör så här så syns den här.",
   saved:"Mina recept",saveCurrent:"Spara nuvarande",noSaved:"Inga sparade recept ännu.",load:"Öppna",del:"Ta bort",recipeName:"Receptets namn",
   savedOk:"Receptet sparat",loadedOk:"Receptet öppnat",deleteQ:n=>`Ta bort ”${n}”?`,overwriteQ:n=>`Ersätta det sparade receptet ”${n}”?`,
   quickTips:"Tips",tip1:"Ny på surdeg? Börja runt 65 % vattenhalt.",tip2:"Surdegstest: en sked surdeg ska flyta i vatten när den är redo.",
@@ -492,10 +523,10 @@ function renderSteps(){
   S.steps.forEach((st,i)=>{
     const title=el('input',{type:'text',value:st.t||'',placeholder:L.stepTitle+' '+(i+1),on:{input:e=>{st.t=e.target.value;persist()}}});
     const desc=el('textarea',{value:st.d||'',placeholder:L.stepDesc,rows:2,on:{input:e=>{st.d=e.target.value;persist()}}});
-    const min=el('input',{type:'number',inputmode:'numeric',min:0,value:st.m||'',placeholder:L.stepMin,style:'width:90px',on:{input:e=>{st.m=num(e.target.value)||0;persist()}}});
+    const min=el('input',{type:'number',inputmode:'numeric',min:0,value:st.m||'',placeholder:'–',style:'width:90px',on:{input:e=>{st.m=num(e.target.value)||0;persist()}}});
     const move=(d)=>{const j=i+d;if(j<0||j>=S.steps.length)return;[S.steps[i],S.steps[j]]=[S.steps[j],S.steps[i]];renderSteps();persist()};
     box.append(el('div',{className:'st'},el('div',{className:'n',textContent:i+1}),
-      el('div',{className:'b'},title,desc,el('div',{style:'display:flex;align-items:center;gap:6px'},min,el('span',{className:'hint',textContent:L.stepMin}))),
+      el('div',{className:'b'},title,desc,el('label',{style:'display:flex;align-items:center;gap:8px;color:var(--crust);font-weight:600;font-size:14px'},el('span',{style:'display:inline-flex;width:20px',innerHTML:CLOCK_SVG}),L.timerMin,min)),
       el('div',{className:'ctl'},el('button',{textContent:'↑',on:{click:()=>move(-1)}}),el('button',{textContent:'↓',on:{click:()=>move(1)}}),
         el('button',{textContent:'×',on:{click:()=>{S.steps.splice(i,1);renderSteps();persist()}}}))));
   });
@@ -548,9 +579,12 @@ function openKitchen(){
   setAwake(true,true);
   k.append(el('div',{className:'kt'},el('h2',{textContent:L.kitchen}),el('span',{className:'sp'}),el('button',{className:'btn',textContent:L.exit,on:{click:()=>history.back()}})));
   k.append(el('div',{id:'kring'}),el('div',{className:'hint',textContent:`${L[S.style]} · ${fmtW(r.total)} · ${L.check}`}));
-  const item=(name,w,dsc,mins)=>{
-    const it=el('div',{className:'ki',on:{click:e=>{if(e.target.closest('button'))return;it.classList.toggle('done')}}},el('span',{className:'ck',textContent:'✓'}),el('span',{},name,dsc?el('span',{className:'dsc',textContent:dsc}):null),w?el('span',{className:'w',textContent:w}):null);
-    if(mins){const box=el('span',{className:'ktimer','data-tlabel':name,'data-tmins':mins});it.append(box);tmRenderKitchenBox(box)}
+  const item=(name,w,dsc,mins,stepIdx)=>{
+    const box=mins?el('div',{className:'ktimer','data-tlabel':name,'data-tmins':mins}):null;
+    const it=el('div',{className:'ki',on:{click:e=>{if(e.target.closest('button'))return;it.classList.toggle('done');
+      if(stepIdx!=null&&it.classList.contains('done'))offerNext(stepIdx)}}},el('span',{className:'ck',textContent:'✓'}),el('span',{style:'flex:1'},name,dsc?el('span',{className:'dsc',textContent:dsc}):null,box),w?el('span',{className:'w',textContent:w}):null);
+    if(stepIdx!=null)it.dataset.step=stepIdx;
+    if(box)tmRenderKitchenBox(box);
     k.append(it);
   };
   k.append(el('div',{className:'sec',textContent:L.ingredients.toUpperCase()}));
@@ -561,7 +595,7 @@ function openKitchen(){
   if(r.oil)item(L.oil,fmtW(r.oil));
   if(S.style==='enriched'){if(r.butter)item(L.butter,fmtW(r.butter));if(r.eggs)item(L.eggs,L.eggN(r.eggs,fmtW(r.eggW)));if(r.sugar)item(L.sugar,fmtW(r.sugar))}
   if(S.steps.length){k.append(el('div',{className:'sec',textContent:L.steps.toUpperCase()}));
-    S.steps.forEach((s,i)=>item(`${i+1}. ${s.t||L.stepTitle+' '+(i+1)}`,'',s.d,s.m))}
+    S.steps.forEach((s,i)=>item(stepLabel(i),'',s.d,s.m,i))}
   if(S.notes.trim())k.append(el('div',{className:'sec',textContent:L.notes.toUpperCase()}),el('p',{style:'white-space:pre-wrap;color:var(--muted)',textContent:S.notes}));
 }
 /* ---------- timers (Levain's own; in the app they ring even when it is closed) ---------- */
@@ -593,10 +627,10 @@ function fmtLeft(ms){const s=Math.max(0,Math.ceil(ms/1000)),h=Math.floor(s/3600)
 function tmRenderKitchenBox(box){
   const label=box.dataset.tlabel,mins=box.dataset.tmins,t=TM.find(x=>x.label===label);
   box.innerHTML='';
-  if(t){box.append(el('span',{className:'tt','data-end':t.endAt,textContent:fmtLeft(t.endAt-Date.now())}),
-      el('button',{className:'tx',textContent:'✕','aria-label':L.cancelTimer,on:{click:()=>tmCancel(t.id)}}))}
-  else{if(tmDone.has(label))box.append(el('span',{textContent:'✅'}));
-    box.append(el('button',{className:'btn sm',textContent:(tmDone.has(label)?'↻ ':'⏱ ')+mins+' '+L.stepMin,on:{click:()=>tmStart(label,mins)}}))}
+  if(t){box.append(el('span',{className:'trun'},el('span',{className:'tt','data-end':t.endAt,textContent:fmtLeft(t.endAt-Date.now())}),
+      el('button',{className:'tx',textContent:'✕','aria-label':L.cancelTimer,on:{click:()=>tmCancel(t.id)}})))}
+  else{const again=tmDone.has(label);
+    box.append(tStartBtn((again?'✅ ':'')+L.startTimer+' · '+fmtDur(mins),()=>tmStart(label,mins),again))}
 }
 function tmRender(){
   const bar=$('timerBar'),kr=$('kring');bar.innerHTML='';if(kr)kr.innerHTML='';
@@ -614,7 +648,51 @@ function tmRender(){
     bar.append(box);
   }
   document.querySelectorAll('#kitchen .ktimer').forEach(tmRenderKitchenBox);
+  $('timerBadge').textContent=TM.length||'';$('timerBtn').classList.toggle('run',TM.length>0);
+  if($('tdlg').open)renderTimerDialog();
 }
+const CLOCK_SVG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5M9 2h6M12 2v3"/></svg>';
+function tStartBtn(text,fn,again){const b=el('button',{className:'tstart'+(again?' again':''),on:{click:fn}});b.innerHTML=CLOCK_SVG;b.append(text);return b}
+function fmtDur(mins){mins=num(mins);if(mins<1)return Math.round(mins*60)+' s';const h=Math.floor(mins/60),m=Math.round(mins%60);
+  return h?(h+'\u00a0h'+(m?' '+m+'\u00a0min':'')):m+'\u00a0min'}
+function stepLabel(i){const s=S.steps[i];return `${i+1}. ${s.t||L.stepTitle+' '+(i+1)}`}
+/* next-step prompt after ticking a step in baking mode */
+let nextT;
+function offerNext(i){
+  const kitchen=$('kitchen');let j=i+1;
+  for(;j<S.steps.length;j++){const row=kitchen.querySelector(`.ki[data-step="${j}"]`);if(!row||!row.classList.contains('done'))break}
+  const bar=$('nextBar');clearTimeout(nextT);
+  if(j>=S.steps.length){bar.classList.remove('show');return}
+  const st=S.steps[j],label=stepLabel(j),running=TM.some(t=>t.label===label);
+  bar.innerHTML='';
+  bar.append(el('div',{className:'nt'},el('small',{textContent:L.nextStep}),label+(st.m?' – '+fmtDur(st.m):'')));
+  if(st.m&&!running)bar.append(tStartBtn(L.startTimer,()=>{tmStart(label,st.m);bar.classList.remove('show')}));
+  bar.append(el('button',{className:'nx',textContent:'✕',on:{click:()=>bar.classList.remove('show')}}));
+  bar.classList.add('show');
+  nextT=setTimeout(()=>bar.classList.remove('show'),st.m&&!running?10000:5000);
+}
+/* timers sheet from the header button */
+function renderTimerDialog(){
+  const b=$('tdlgBody');b.innerHTML='';
+  b.append(el('h3',{},L.timers,el('span',{className:'sp'}),el('button',{className:'btn sm',textContent:L.close,on:{click:()=>$('tdlg').close()}})));
+  b.append(el('div',{className:'sec',textContent:L.running.toUpperCase()}));
+  if(!TM.length)b.append(el('div',{className:'hint',textContent:L.noTimers}));
+  for(const t of [...TM].sort((a,c)=>a.endAt-c.endAt))
+    b.append(el('div',{className:'srow'},el('span',{className:'tl',textContent:t.label}),el('span',{className:'tt','data-end':t.endAt,textContent:fmtLeft(t.endAt-Date.now())}),
+      el('button',{className:'tx',textContent:'✕','aria-label':L.cancelTimer,on:{click:()=>tmCancel(t.id)}})));
+  b.append(el('div',{className:'sec',textContent:L.stepTimers.toUpperCase()}));
+  const timed=S.steps.map((s,i)=>[s,i]).filter(([s])=>s.m>0);
+  if(!timed.length)b.append(el('div',{className:'hint',textContent:L.noStepTimers}));
+  for(const[s,i]of timed){const label=stepLabel(i);if(TM.some(t=>t.label===label))continue;
+    b.append(el('div',{className:'srow'},el('span',{className:'tl',textContent:label}),tStartBtn(fmtDur(s.m),()=>tmStart(label,s.m))))}
+  b.append(el('div',{className:'sec',textContent:L.quickTimer.toUpperCase()}));
+  const q=el('div',{className:'qchips'});
+  for(const m of [5,10,15,20,30,45,60])q.append(el('button',{textContent:fmtDur(m),on:{click:()=>tmStart(L.timerWord+' '+fmtDur(m),m)}}));
+  b.append(q);
+  const inp=el('input',{type:'number',inputmode:'numeric',min:1,placeholder:L.minutes});
+  b.append(el('div',{className:'qrow'},inp,tStartBtn(L.startTimer,()=>{const m=num(inp.value);if(m>0){tmStart(L.timerWord+' '+fmtDur(m),m);inp.value=''}})));
+}
+function openTimerDialog(){tmLoad();renderTimerDialog();$('tdlg').showModal()}
 let tmTicks=0;
 setInterval(()=>{
   const now=Date.now();let expired=false;
@@ -631,7 +709,7 @@ setInterval(()=>{
 },1000);
 window.onTimersChanged=()=>{tmLoad();tmRender()};
 document.addEventListener('visibilitychange',()=>{if(!document.hidden){tmLoad();tmRender()}});
-function closeKitchen(){$('kitchen').classList.remove('show');setAwake(prefs.awake,true);tmRender()}
+function closeKitchen(){$('kitchen').classList.remove('show');$('nextBar').classList.remove('show');setAwake(prefs.awake,true);tmRender()}
 window.addEventListener('popstate',()=>{if($('kitchen').classList.contains('show'))closeKitchen()});
 
 /* ---------- prefs ---------- */
@@ -669,6 +747,8 @@ $('copyBlend').onclick=()=>{S.starterBlend=JSON.parse(JSON.stringify(S.doughBlen
 $('resetBtn').onclick=async()=>{if(await ask(L.resetQ)){const keep={notes:S.notes,steps:S.steps};S=Object.assign(freshState(S.style),keep);renderAll()}};
 $('shareBtn').onclick=share;
 $('kitchenBtn').onclick=openKitchen;
+$('timerBtn').onclick=openTimerDialog;
+$('tdlg').addEventListener('click',e=>{if(e.target===$('tdlg'))$('tdlg').close()});
 $('addStep').onclick=()=>{S.steps.push({t:'',d:'',m:0});renderSteps();persist();const ins=$('stepList').querySelectorAll('input[type=text]');ins[ins.length-1]?.focus()};
 $('defaultSteps').onclick=()=>{for(const[t,d,m]of L.template)S.steps.push({t,d,m:m||0});renderSteps();persist()};
 $('saveBtn').onclick=saveCurrent;

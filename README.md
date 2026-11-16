@@ -15,7 +15,7 @@ No internet permission – everything is bundled in `app/src/main/assets/index.h
 - Flour blends for the dough and the starter (7 flour types)
 - Ingredients to add, totals and baker's percentages
 - Notes, method steps (with a template), saved recipes, share as text
-- Baking mode with a tick-off list and built-in step timers: several at once, they keep running when the app is closed and ring like an alarm clock (alarm volume, vibration, full-screen Stop button over the lock screen)
+- Baking mode with a tick-off list and built-in step timers: start them from each step, from the ⏱ button at the top (also quick timers) or from the "Next step" prompt that appears when you tick a step off. Several can run at once; they keep running when the app is closed and ring like an alarm clock (alarm volume, vibration, full-screen Stop button over the lock screen)
 - Automatic, light or dark theme; keep-screen-on; English and Swedish (follows the phone language)
 
 ## Download
