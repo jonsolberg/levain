@@ -1,12 +1,14 @@
 package se.jonsolberg.sourdough;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.os.Build;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.AlarmClock;
 import android.view.View;
 import android.view.WindowInsetsController;
 import android.view.WindowManager;
@@ -15,7 +17,6 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Toast;
 
 /**
  * Hosts the bundled, fully offline Levain bread calculator (assets/index.html) in a WebView.
@@ -59,6 +60,20 @@ public class MainActivity extends Activity {
             web.restoreState(savedInstanceState);
         } else {
             web.loadUrl("file:///android_asset/index.html");
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Timers may have been cancelled or rung from the notification while we were away.
+        web.evaluateJavascript("window.onTimersChanged&&onTimersChanged()", null);
+    }
+
+    private void askNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= 33
+                && checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, 1);
         }
     }
 
@@ -141,20 +156,32 @@ public class MainActivity extends Activity {
             runOnUiThread(() -> applyBars(dark));
         }
 
-        /** Starts a countdown in the phone's clock app so it rings even if this app is closed. */
+        /** Starts (or restarts) one of Levain's own timers. Returns when it ends, in ms since 1970. */
         @JavascriptInterface
-        public void startTimer(String label, int seconds) {
-            runOnUiThread(() -> {
-                Intent i = new Intent(AlarmClock.ACTION_SET_TIMER)
-                        .putExtra(AlarmClock.EXTRA_LENGTH, Math.max(1, seconds))
-                        .putExtra(AlarmClock.EXTRA_MESSAGE, label)
-                        .putExtra(AlarmClock.EXTRA_SKIP_UI, true);
-                try {
-                    startActivity(i);
-                } catch (ActivityNotFoundException e) {
-                    Toast.makeText(MainActivity.this, R.string.no_timer_app, Toast.LENGTH_SHORT).show();
-                }
-            });
+        public double startTimer(int id, String label, int seconds) {
+            runOnUiThread(MainActivity.this::askNotificationPermission);
+            return Timers.start(MainActivity.this, id, label, seconds);
+        }
+
+        @JavascriptInterface
+        public void cancelTimer(int id) {
+            Timers.cancel(MainActivity.this, id);
+        }
+
+        /** Running timers as JSON: [{id, label, endAt}]. */
+        @JavascriptInterface
+        public String getTimers() {
+            return Timers.all(MainActivity.this).toString();
+        }
+
+        @JavascriptInterface
+        public boolean isAlarmRinging() {
+            return AlarmService.isRinging();
+        }
+
+        @JavascriptInterface
+        public void stopAlarm() {
+            AlarmService.stop(MainActivity.this);
         }
     }
 }

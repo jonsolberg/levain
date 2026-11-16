@@ -6,4 +6,7 @@
     <color name="bg_dark">#FF1A1714</color>
     <color name="accent">#FF5F7F52</color>
     <color name="icon_bg">#FFA8662D</color>
+    <color name="text">#FF2B2620</color>
+    <color name="muted">#FF7B7062</color>
+    <color name="on_accent">#FFFFFFFF</color>
 </resources>

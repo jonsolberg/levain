@@ -83,6 +83,16 @@ details p,details li{color:var(--muted);font-size:14px}
 details b{color:var(--text)}
 .tips p{margin:4px 0;font-size:14px;color:var(--muted)}
 .row2{display:flex;gap:8px;flex-wrap:wrap}
+#timerBar{position:sticky;top:60px;z-index:4;max-width:640px;margin:0 auto;padding:0 12px}
+#timerBar:empty{display:none}
+.tbar{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--crust);border-radius:6px;box-shadow:var(--shadow);padding:6px 10px;margin-top:6px}
+.trow{display:flex;align-items:center;gap:8px;padding:4px 0;font-size:14px}
+.trow .tl{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tt{font:700 17px Georgia,'Noto Serif',serif;font-variant-numeric:tabular-nums;color:var(--crust)}
+.tx{background:none;border:1px solid var(--line);color:var(--muted);border-radius:50%;width:30px;height:30px;font-size:15px;flex:none}
+.ring{background:var(--bad);color:#fff;border-radius:6px;padding:10px 12px;margin-top:6px;display:flex;align-items:center;gap:10px;font-weight:600}
+.ring button{margin-left:auto;background:#fff;color:var(--bad);border:none;border-radius:22px;padding:8px 16px;font-weight:700;font-size:15px}
+.ktimer{display:flex;align-items:center;gap:6px;flex:none}
 #kitchen{position:fixed;inset:0;background:var(--bg);z-index:20;overflow:auto;padding:14px 16px 40px;display:none}
 #kitchen.show{display:block}
 #kitchen h2{font-size:22px;margin:4px 0 4px}
@@ -108,6 +118,7 @@ dialog::backdrop{background:#0008}
   <button class="hbtn" id="awakeBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M10 18h4"/></svg></button>
   <button class="hbtn" id="themeBtn"></button>
 </header>
+<div id="timerBar"></div>
 <main>
 
 <section class="card">
@@ -225,7 +236,7 @@ const T = {
   summary:"SUMMARY",totalFlour:"Total flour (incl. starter)",totalWater:"Total water (incl. starter)",totalWeight:"Total weight",
   bakers:"BAKER'S PERCENTAGES",flour:"Flour",doughWater:"Water (hydration)",
   style:"Style",enterKitchen:"Start baking",notes:"Notes",notesPh:"Your notes: timings, temperatures, how it turned out…",
-  steps:"Method",addStep:"Add Step",defaultSteps:"Use template",stepTitle:"Step",stepDesc:"Details (optional)",stepMin:"min",
+  steps:"Method",addStep:"Add Step",defaultSteps:"Use template",stepTitle:"Step",stepDesc:"Details (optional)",stepMin:"min",timers:"Timers",stopAlarm:"Stop alarm",timeUp:"Time's up",cancelTimer:"Cancel timer",
   saved:"My recipes",saveCurrent:"Save current",noSaved:"No saved recipes yet.",load:"Load",del:"Delete",recipeName:"Recipe name",
   savedOk:"Recipe saved",loadedOk:"Recipe loaded",deleteQ:n=>`Delete “${n}”?`,overwriteQ:n=>`Replace the saved recipe “${n}”?`,
   quickTips:"Tips",tip1:"New to sourdough? Start around 65% hydration.",tip2:"Starter test: a spoonful should float in water when it's ready.",
@@ -264,7 +275,7 @@ const T = {
   summary:"SAMMANSTÄLLNING",totalFlour:"Totalt mjöl (inkl. surdeg)",totalWater:"Totalt vatten (inkl. surdeg)",totalWeight:"Total vikt",
   bakers:"BAGARPROCENT",flour:"Mjöl",doughWater:"Vatten (vattenhalt)",
   style:"Typ",enterKitchen:"Börja baka",notes:"Anteckningar",notesPh:"Dina anteckningar: tider, temperaturer, hur det blev…",
-  steps:"Gör så här",addStep:"Lägg till steg",defaultSteps:"Använd mall",stepTitle:"Steg",stepDesc:"Beskrivning (valfri)",stepMin:"min",
+  steps:"Gör så här",addStep:"Lägg till steg",defaultSteps:"Använd mall",stepTitle:"Steg",stepDesc:"Beskrivning (valfri)",stepMin:"min",timers:"Timers",stopAlarm:"Stoppa larmet",timeUp:"Tiden är ute",cancelTimer:"Avbryt timern",
   saved:"Mina recept",saveCurrent:"Spara nuvarande",noSaved:"Inga sparade recept ännu.",load:"Öppna",del:"Ta bort",recipeName:"Receptets namn",
   savedOk:"Receptet sparat",loadedOk:"Receptet öppnat",deleteQ:n=>`Ta bort ”${n}”?`,overwriteQ:n=>`Ersätta det sparade receptet ”${n}”?`,
   quickTips:"Tips",tip1:"Ny på surdeg? Börja runt 65 % vattenhalt.",tip2:"Surdegstest: en sked surdeg ska flyta i vatten när den är redo.",
@@ -532,16 +543,14 @@ function share(){
 }
 
 /* ---------- kitchen mode ---------- */
-let timers={};
 function openKitchen(){
-  const r=calc(), k=$('kitchen');k.innerHTML='';k.classList.add('show');history.pushState({k:1},'');
+  tmLoad();const r=calc(), k=$('kitchen');k.innerHTML='';k.classList.add('show');history.pushState({k:1},'');tmRender();
   setAwake(true,true);
   k.append(el('div',{className:'kt'},el('h2',{textContent:L.kitchen}),el('span',{className:'sp'}),el('button',{className:'btn',textContent:L.exit,on:{click:()=>history.back()}})));
-  k.append(el('div',{className:'hint',textContent:`${L[S.style]} · ${fmtW(r.total)} · ${L.check}`}));
+  k.append(el('div',{id:'kring'}),el('div',{className:'hint',textContent:`${L[S.style]} · ${fmtW(r.total)} · ${L.check}`}));
   const item=(name,w,dsc,mins)=>{
-    const tm=mins?el('span',{className:'timer'}):null;
-    const it=el('div',{className:'ki',on:{click:e=>{if(e.target.closest('button'))return;it.classList.toggle('done')}}},el('span',{className:'ck',textContent:'✓'}),el('span',{},name,dsc?el('span',{className:'dsc',textContent:dsc}):null,tm),w?el('span',{className:'w',textContent:w}):null);
-    if(mins){const b=el('button',{className:'btn sm',textContent:'⏱ '+mins+' '+L.stepMin,on:{click:()=>startTimer(name,mins,tm,b)}});it.append(b)}
+    const it=el('div',{className:'ki',on:{click:e=>{if(e.target.closest('button'))return;it.classList.toggle('done')}}},el('span',{className:'ck',textContent:'✓'}),el('span',{},name,dsc?el('span',{className:'dsc',textContent:dsc}):null),w?el('span',{className:'w',textContent:w}):null);
+    if(mins){const box=el('span',{className:'ktimer','data-tlabel':name,'data-tmins':mins});it.append(box);tmRenderKitchenBox(box)}
     k.append(it);
   };
   k.append(el('div',{className:'sec',textContent:L.ingredients.toUpperCase()}));
@@ -555,14 +564,74 @@ function openKitchen(){
     S.steps.forEach((s,i)=>item(`${i+1}. ${s.t||L.stepTitle+' '+(i+1)}`,'',s.d,s.m))}
   if(S.notes.trim())k.append(el('div',{className:'sec',textContent:L.notes.toUpperCase()}),el('p',{style:'white-space:pre-wrap;color:var(--muted)',textContent:S.notes}));
 }
-function startTimer(name,mins,out,btn){
-  if(native&&native.startTimer){native.startTimer(name,mins*60);}
-  clearInterval(timers[name]);const end=Date.now()+mins*60000;btn.style.display='none';
-  const tick=()=>{const s=Math.max(0,Math.round((end-Date.now())/1000));const h=Math.floor(s/3600),m=Math.floor(s/60)%60,ss=s%60;
-    out.textContent=' ⏱ '+(h?h+':'+String(m).padStart(2,'0'):m)+':'+String(ss).padStart(2,'0');if(!s){clearInterval(timers[name]);out.textContent=' ✅'}};
-  tick();timers[name]=setInterval(tick,1000);
+/* ---------- timers (Levain's own; in the app they ring even when it is closed) ---------- */
+const hasNative=()=>!!(native&&native.startTimer&&native.getTimers);
+let TM=[];                 // running: [{id,label,endAt}]
+const tmDone=new Set();    // labels that finished during this session
+function tmLoad(){
+  const before=TM;
+  if(hasNative()){try{TM=JSON.parse(native.getTimers())||[]}catch(e){TM=[]}}
+  else{TM=(load('sd_timers')||[]).filter(t=>t.endAt>Date.now()-1000)}
+  const now=Date.now();
+  for(const t of before)if(!TM.some(x=>x.id===t.id)&&t.endAt<=now+1500)tmDone.add(t.label);
 }
-function closeKitchen(){$('kitchen').classList.remove('show');setAwake(prefs.awake,true)}
+function tmSaveWeb(){store('sd_timers',TM)}
+function tmId(label){let h=7;for(const ch of label)h=(h*31+ch.codePointAt(0))|0;return Math.abs(h)%900000+1}
+function tmStart(label,mins){
+  const id=tmId(label),secs=Math.max(1,Math.round(num(mins)*60));tmDone.delete(label);
+  if(hasNative())native.startTimer(id,label,secs);
+  else{TM=TM.filter(t=>t.id!==id);TM.push({id,label,endAt:Date.now()+secs*1000});tmSaveWeb()}
+  tmLoad();tmRender();
+}
+function tmCancel(id){
+  if(hasNative())native.cancelTimer(id);
+  else{TM=TM.filter(t=>t.id!==id);tmSaveWeb()}
+  tmLoad();tmRender();
+}
+function fmtLeft(ms){const s=Math.max(0,Math.ceil(ms/1000)),h=Math.floor(s/3600),m=Math.floor(s/60)%60,ss=s%60;
+  return (h?h+':'+String(m).padStart(2,'0'):m)+':'+String(ss).padStart(2,'0')}
+function tmRenderKitchenBox(box){
+  const label=box.dataset.tlabel,mins=box.dataset.tmins,t=TM.find(x=>x.label===label);
+  box.innerHTML='';
+  if(t){box.append(el('span',{className:'tt','data-end':t.endAt,textContent:fmtLeft(t.endAt-Date.now())}),
+      el('button',{className:'tx',textContent:'✕','aria-label':L.cancelTimer,on:{click:()=>tmCancel(t.id)}}))}
+  else{if(tmDone.has(label))box.append(el('span',{textContent:'✅'}));
+    box.append(el('button',{className:'btn sm',textContent:(tmDone.has(label)?'↻ ':'⏱ ')+mins+' '+L.stepMin,on:{click:()=>tmStart(label,mins)}}))}
+}
+function tmRender(){
+  const bar=$('timerBar'),kr=$('kring');bar.innerHTML='';if(kr)kr.innerHTML='';
+  const inKitchen=$('kitchen').classList.contains('show');
+  if(hasNative()&&native.isAlarmRinging&&native.isAlarmRinging()){
+    ((inKitchen&&kr)||bar).append(el('div',{className:'ring'},el('span',{textContent:'⏰ '+L.timeUp}),
+      el('button',{textContent:L.stopAlarm,on:{click:()=>{native.stopAlarm();setTimeout(tmRender,400)}}})));
+  }
+  if(TM.length&&!inKitchen){
+    const box=el('div',{className:'tbar'});
+    for(const t of [...TM].sort((a,b)=>a.endAt-b.endAt))
+      box.append(el('div',{className:'trow'},el('span',{className:'tl',textContent:t.label}),
+        el('span',{className:'tt','data-end':t.endAt,textContent:fmtLeft(t.endAt-Date.now())}),
+        el('button',{className:'tx',textContent:'✕','aria-label':L.cancelTimer,on:{click:()=>tmCancel(t.id)}})));
+    bar.append(box);
+  }
+  document.querySelectorAll('#kitchen .ktimer').forEach(tmRenderKitchenBox);
+}
+let tmTicks=0;
+setInterval(()=>{
+  const now=Date.now();let expired=false;
+  document.querySelectorAll('[data-end]').forEach(e=>{const left=+e.dataset.end-now;e.textContent=fmtLeft(left);if(left<=0)expired=true});
+  if(!hasNative()&&TM.some(t=>t.endAt<=now)){
+    const gone=TM.filter(t=>t.endAt<=now);gone.forEach(t=>tmDone.add(t.label));
+    TM=TM.filter(t=>t.endAt>now);tmSaveWeb();toast('⏰ '+L.timeUp+': '+gone.map(t=>t.label).join(', '));expired=true;
+  }
+  if(expired){setTimeout(()=>{tmLoad();tmRender()},800)}
+  else if(++tmTicks%3===0&&hasNative()){
+    const sig=JSON.stringify(TM)+native.isAlarmRinging();tmLoad();
+    if(JSON.stringify(TM)+native.isAlarmRinging()!==sig)tmRender();
+  }
+},1000);
+window.onTimersChanged=()=>{tmLoad();tmRender()};
+document.addEventListener('visibilitychange',()=>{if(!document.hidden){tmLoad();tmRender()}});
+function closeKitchen(){$('kitchen').classList.remove('show');setAwake(prefs.awake,true);tmRender()}
 window.addEventListener('popstate',()=>{if($('kitchen').classList.contains('show'))closeKitchen()});
 
 /* ---------- prefs ---------- */
@@ -607,7 +676,7 @@ $('themeBtn').onclick=()=>{prefs.theme={auto:'light',light:'dark',dark:'auto'}[p
 $('awakeBtn').onclick=()=>{prefs.awake=!prefs.awake;applyPrefs();setAwake(prefs.awake)};
 for(const[h,body]of L.learn){const d=el('details',{},el('summary',{textContent:h}));const c=el('div');c.innerHTML=body;d.append(c);$('learnBody').append(d)}
 if(native&&native.isSystemDark)systemDark=native.isSystemDark();
-applyPrefs();renderAll();if(prefs.awake)setAwake(true,true);
+applyPrefs();renderAll();tmLoad();tmRender();if(prefs.awake)setAwake(true,true);
 </script>
 </body>
 </html>

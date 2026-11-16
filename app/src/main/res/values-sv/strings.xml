@@ -2,5 +2,12 @@
 <resources>
     <string name="app_name">Levain</string>
     <string name="share_title">Dela recept</string>
-    <string name="no_timer_app">Ingen klockapp hittades för timer</string>
+    <string name="channel_running">Pågående timers</string>
+    <string name="channel_alarm">Timerlarm</string>
+    <string name="channel_ready">Timerlarm (reserv)</string>
+    <string name="timer_running">Timern går</string>
+    <string name="ready_title">Tiden är ute</string>
+    <string name="stop_alarm">Stoppa larmet</string>
+    <string name="stop_and_open">Stoppa och öppna Levain</string>
+    <string name="cancel">Avbryt</string>
 </resources>
