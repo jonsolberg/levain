@@ -4,6 +4,7 @@
     <!-- No INTERNET permission: the app is fully offline. -->
 
     <!-- Step timers: Levain's own alarm, rings even when the app is closed. -->
+    <uses-permission android:name="android.permission.INTERNET" />  <!-- only for the daily update check -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission
         android:name="android.permission.SCHEDULE_EXACT_ALARM"

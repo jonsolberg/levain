@@ -1,7 +1,7 @@
 # Levain (Android)
 
 A fully offline bread calculator based on baker's percentages.
-No internet permission – everything is bundled in `app/src/main/assets/index.html`.
+Everything is bundled in `app/src/main/assets/index.html`. The only network use is an optional daily check for new versions on GitHub, which you can turn off at first start.
 
 <p align="center">
   <img src="docs/screenshot-dough.png" width="250" alt="Levain dough settings">
