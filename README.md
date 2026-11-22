@@ -22,6 +22,8 @@ No internet permission – everything is bundled in `app/src/main/assets/index.h
 
 **[Download the latest APK](https://github.com/jonsolberg/levain/releases/latest/download/Levain.apk)** · [all releases](https://github.com/jonsolberg/levain/releases)
 
+To install the APK, allow your browser or file manager to *install unknown apps* when Android asks.
+
 ## Building
 Push to GitHub – the workflow builds the APK and publishes `Levain.apk` on the `apk` branch.
 Or open the folder in Android Studio and choose *Build → Build APK(s)*.
